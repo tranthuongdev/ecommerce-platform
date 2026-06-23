@@ -171,4 +171,12 @@ Sprint 1 chỉ được đóng khi tất cả các điều sau ĐỀU đạt:
 
 ## Notes & Risks
 
-[Để trống — điền trong quá trình sprint khi có insight mới]
+## Day-by-Day Notes
+
+### T2 Tuần 1 — [22/06/2026]
+- ✅ Sprint Planning done, 6 stories committed
+- ✅ Repo + branch protection + Projects board + 6 labels
+- ✅ All dev tools installed and verified
+- 📝 First PR merged: docs/sprint-01-plan
+- ⏱️ Time spent: []
+- 💡 Learning: [nếu có gì nhận ra hôm nay]
