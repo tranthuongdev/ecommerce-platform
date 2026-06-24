@@ -2,6 +2,7 @@ package com.athanas.ecommerce.auth.login;
 
 import com.athanas.ecommerce.auth.token.JwtGenerator;
 import com.athanas.ecommerce.auth.token.JwtProperties;
+import com.athanas.ecommerce.auth.token.RefreshTokenService;
 import com.athanas.ecommerce.auth.user.Role;
 import com.athanas.ecommerce.auth.user.User;
 import com.athanas.ecommerce.auth.user.UserRepository;
@@ -37,6 +38,7 @@ class LoginServiceTest {
     @Mock JwtGenerator jwtGenerator;
     @Mock JwtProperties jwtProperties;
     @Mock LoginAttemptTracker loginAttemptTracker;
+    @Mock RefreshTokenService refreshTokenService;
     @InjectMocks LoginService service;
 
     private static final LoginRequest REQ = new LoginRequest("user@example.com", "secret123");
@@ -61,11 +63,12 @@ class LoginServiceTest {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("secret123", "encoded")).thenReturn(true);
         when(jwtGenerator.generateAccessToken(any(), any())).thenReturn("jwt.token.here");
+        when(refreshTokenService.issue(any())).thenReturn("refresh.token.plain");
 
         LoginResponse resp = service.login(REQ);
 
         assertThat(resp.accessToken()).isEqualTo("jwt.token.here");
-        assertThat(resp.refreshToken()).isEqualTo("TBD_US005");
+        assertThat(resp.refreshToken()).isEqualTo("refresh.token.plain");
         assertThat(resp.expiresIn()).isEqualTo(900L);
         verify(loginAttemptTracker).clearOnSuccess(anyString());
     }

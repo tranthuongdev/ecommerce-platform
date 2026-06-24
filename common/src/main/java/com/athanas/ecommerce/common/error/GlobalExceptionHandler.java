@@ -68,6 +68,31 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidRefreshToken(InvalidRefreshTokenException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .body(factory.of(
+                        HttpStatus.UNAUTHORIZED,
+                        ex.getMessage(),
+                        "https://athanas.dev/errors/invalid-refresh-token"
+                ));
+    }
+
+    @ExceptionHandler(RefreshTokenReuseException.class)
+    public ResponseEntity<ProblemDetail> handleRefreshTokenReuse(RefreshTokenReuseException ex) {
+        log.warn("SECURITY: refresh token reuse detected for userId={}", ex.getUserId());
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .body(factory.of(
+                        HttpStatus.UNAUTHORIZED,
+                        ex.getMessage(),
+                        "https://athanas.dev/errors/refresh-token-reuse"
+                ));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleGeneric(Exception ex) {
         log.error("Unhandled exception", ex);

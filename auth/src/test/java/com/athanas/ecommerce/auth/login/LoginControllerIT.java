@@ -92,7 +92,7 @@ class LoginControllerIT {
                         .content(String.format("{\"email\":\"%s\",\"password\":\"%s\"}", email, password)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.refreshToken").value("TBD_US005"))
+                .andExpect(jsonPath("$.refreshToken").isNotEmpty())
                 .andExpect(jsonPath("$.expiresIn").isNumber())
                 .andReturn();
 
