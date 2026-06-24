@@ -43,6 +43,31 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ProblemDetail> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .body(factory.of(
+                        HttpStatus.UNAUTHORIZED,
+                        ex.getMessage(),
+                        "https://athanas.dev/errors/invalid-credentials"
+                ));
+    }
+
+    @ExceptionHandler(TooManyAttemptsException.class)
+    public ResponseEntity<ProblemDetail> handleTooManyAttempts(TooManyAttemptsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .header("Retry-After", String.valueOf(ex.getRetryAfter().toSeconds()))
+                .body(factory.of(
+                        HttpStatus.TOO_MANY_REQUESTS,
+                        ex.getMessage(),
+                        "https://athanas.dev/errors/too-many-attempts"
+                ));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleGeneric(Exception ex) {
         log.error("Unhandled exception", ex);
