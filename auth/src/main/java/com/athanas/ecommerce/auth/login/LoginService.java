@@ -2,6 +2,7 @@ package com.athanas.ecommerce.auth.login;
 
 import com.athanas.ecommerce.auth.token.JwtGenerator;
 import com.athanas.ecommerce.auth.token.JwtProperties;
+import com.athanas.ecommerce.auth.token.RefreshTokenService;
 import com.athanas.ecommerce.auth.user.Role;
 import com.athanas.ecommerce.auth.user.User;
 import com.athanas.ecommerce.auth.user.UserRepository;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class LoginService {
 
     private final UserRepository userRepository;
@@ -24,6 +25,7 @@ public class LoginService {
     private final JwtGenerator jwtGenerator;
     private final JwtProperties jwtProperties;
     private final LoginAttemptTracker loginAttemptTracker;
+    private final RefreshTokenService refreshTokenService;
 
     public LoginResponse login(LoginRequest req) {
         String key = "login:fail:" + req.email().toLowerCase();
@@ -53,7 +55,8 @@ public class LoginService {
                 .collect(Collectors.toSet());
 
         String accessToken = jwtGenerator.generateAccessToken(user.getId(), roleNames);
+        String refreshToken = refreshTokenService.issue(user.getId());
 
-        return new LoginResponse(accessToken, "TBD_US005", jwtProperties.getAccessTtl().toSeconds());
+        return new LoginResponse(accessToken, refreshToken, jwtProperties.getAccessTtl().toSeconds());
     }
 }
