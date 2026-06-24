@@ -69,6 +69,11 @@
                     <version>3.5.2</version>
                     <configuration>
                         <useModulePath>false</useModulePath>
+                        <includes>
+                            <include>**/*Test.java</include>
+                            <include>**/*Tests.java</include>
+                            <include>**/*IT.java</include>
+                        </includes>
                     </configuration>
                 </plugin>
                 <plugin>

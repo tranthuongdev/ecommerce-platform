@@ -1,0 +1,43 @@
+{
+  "info": {
+    "name": "Athanas Ecommerce - Auth",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "POST /v1/auth/register",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "http://localhost:8080/v1/auth/register", "host": ["localhost"], "port": "8080", "path": ["v1", "auth", "register"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"secret123\",\n  \"fullName\": \"Test User\"\n}"
+        }
+      },
+      "response": [
+        {
+          "name": "201 Created",
+          "status": "Created",
+          "code": 201,
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": "{\n  \"id\": \"550e8400-e29b-41d4-a716-446655440000\",\n  \"email\": \"user@example.com\",\n  \"fullName\": \"Test User\",\n  \"createdAt\": \"2026-06-24T07:00:00Z\"\n}"
+        },
+        {
+          "name": "409 Conflict - Duplicate Email",
+          "status": "Conflict",
+          "code": 409,
+          "header": [{ "key": "Content-Type", "value": "application/problem+json" }],
+          "body": "{\n  \"type\": \"https://athanas.dev/errors/email-exists\",\n  \"title\": \"Conflict\",\n  \"status\": 409,\n  \"detail\": \"Email already registered: user@example.com\"\n}"
+        },
+        {
+          "name": "400 Bad Request - Validation Failed",
+          "status": "Bad Request",
+          "code": 400,
+          "header": [{ "key": "Content-Type", "value": "application/problem+json" }],
+          "body": "{\n  \"type\": \"about:blank\",\n  \"title\": \"Validation Failed\",\n  \"status\": 400,\n  \"errors\": {\n    \"email\": \"must be a well-formed email address\",\n    \"password\": \"size must be between 8 and 72\"\n  }\n}"
+        }
+      ]
+    }
+  ]
+}

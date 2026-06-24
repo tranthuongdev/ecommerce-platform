@@ -9,3 +9,9 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+
+app:
+  jwt:
+    secret: test_jwt_secret_for_auth_module_tests_min_256_bits_long_xxxx
+    access-ttl: PT15M
+    refresh-ttl: P7D
