@@ -4,3 +4,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+  data:
+    redis:
+      lettuce:
+        shutdown-timeout: 100ms

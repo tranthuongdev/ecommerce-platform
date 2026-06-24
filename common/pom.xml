@@ -28,6 +28,12 @@
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
 
+        <!-- JPA annotations + Spring Data auditing — needed by BaseEntity -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
         <!-- Lombok — compile-time only, not bundled in jar -->
         <dependency>
             <groupId>org.projectlombok</groupId>
