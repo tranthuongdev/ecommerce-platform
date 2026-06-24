@@ -1,6 +1,6 @@
 # ADR-001: Modular Monolith with Package-by-Feature Structure
 
-**Date:** 2026-06-23
+**Date:** 2026-06-27
 **Status:** Accepted
 **Deciders:** Trần Thưởng
 

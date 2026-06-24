@@ -173,10 +173,23 @@ Sprint 1 chỉ được đóng khi tất cả các điều sau ĐỀU đạt:
 
 ## Day-by-Day Notes
 
-### T2 Tuần 1 — [22/06/2026]
-- ✅ Sprint Planning done, 6 stories committed
+### T2 (Sprint Planning + Setup)
+- ✅ Sprint Planning: 6 user stories committed
 - ✅ Repo + branch protection + Projects board + 6 labels
-- ✅ All dev tools installed and verified
-- 📝 First PR merged: docs/sprint-01-plan
-- ⏱️ Time spent: []
-- 💡 Learning: [nếu có gì nhận ra hôm nay]
+- ✅ Dev tools installed (JDK 21, Docker, k6, psql)
+
+### T3 (Multi-module scaffold)
+- ✅ 3 modules: common, auth, app
+
+### T4 (Docker Compose + IntegrationSmokeTest)
+- ✅ postgres:17-alpine + redis:7-alpine với healthchecks
+- ✅ Testcontainers IntegrationSmokeTest pass
+
+### T5 (Flyway V1 + entities)
+- ✅ BaseEntity + JpaAuditingConfig (common)
+- ✅ V1 migration: users, roles, user_roles
+- ✅ User + Role + repositories (auth)
+- ✅ 4/4 UserRepositoryTest pass
+
+### T6 (GitHub Actions CI)
+- ✅ CI pipeline + JaCoCo 70% gate trên auth
