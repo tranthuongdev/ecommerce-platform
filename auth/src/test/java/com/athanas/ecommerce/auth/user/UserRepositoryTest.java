@@ -96,6 +96,19 @@ class UserRepositoryTest {
     }
 
     @Test
+    void shouldGenerateIdAndCreatedAtOnRolePersist() {
+        Role role = new Role();
+        role.setName("MODERATOR");
+        role.setDescription("Content moderator");
+
+        Role saved = roleRepository.saveAndFlush(role);
+
+        assertThat(saved.getId()).isNotNull();
+        assertThat(saved.getCreatedAt()).isNotNull();
+        assertThat(saved.getName()).isEqualTo("MODERATOR");
+    }
+
+    @Test
     void softDeletedUserShouldNotBeFound() {
         Role userRole = roleRepository.findByName("USER").orElseThrow();
 

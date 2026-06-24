@@ -1,5 +1,8 @@
 # ecommerce-platform
 
+![CI](https://github.com/tranthuongdev/ecommerce-platform/actions/workflows/ci.yml/badge.svg)
+![Coverage](https://img.shields.io/badge/coverage-70%25%20gate-blue)
+
 Modular monolith e-commerce platform. Solo dev — Year 1 target: **5,000 RPS** end of Q4.
 Year 2 plan: Strangler Fig migration to microservices per [ADR-001](docs/adr/ADR-001-modular-monolith.md).
 
