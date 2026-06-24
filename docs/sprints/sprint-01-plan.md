@@ -1,8 +1,8 @@
 # Sprint 1 — Project Setup + Auth Skeleton
 
 **Duration:** Tuần 1-2 (Sprint 1 of 24)
-**Start date:** [TODO: ghi ngày T2 hôm nay, ví dụ 2026-06-23]
-**End date:** [TODO: ghi ngày T7 tuần 2, ví dụ 2026-07-05]
+**Start date:** 2026-06-22
+**End date:** 2026-07-04
 **Sprint Goal:** Người dùng có thể đăng ký tài khoản, đăng nhập bằng email/password, và refresh token — toàn bộ flow chạy được qua Postman, có integration test xanh, CI pipeline pass trên mọi PR.
 
 ---

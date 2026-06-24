@@ -5,13 +5,26 @@ spring:
   application:
     name: ecommerce-platform
   datasource:
-    # Filled in T4 (Sprint 1, Day 4)
-    # url: jdbc:postgresql://localhost:5432/ecommerce
-    # username:
-    # password:
+    url: jdbc:postgresql://localhost:5432/ecommerce
+    username: ecommerce
+    password: ecommerce
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized

@@ -33,17 +33,20 @@ app → common
 
 ## How to Run Locally
 
-> Prerequisites: Java 21, Maven 3.9+, Docker (for PostgreSQL via Testcontainers)
+### Prerequisites
+- JDK 21, Maven 3.9+, Docker Desktop
 
-```bash
-# Build all modules
-mvn clean install
+### Setup
+1. Copy environment file: `cp .env.example .env`
+2. Start infrastructure: `docker compose up -d`
+3. Wait for healthy status: `docker compose ps`
+4. Build project: `mvn clean install`
+5. Run app: `cd app && mvn spring-boot:run`
+6. Verify: `curl http://localhost:8080/actuator/health`
 
-# Run the app (Sprint 1, Day 4 — after datasource is configured)
-mvn -pl app spring-boot:run
-```
-
-Database configuration will be added in Sprint 1, Day 4 (`application.yml`).
+### Stop
+- `docker compose down` (preserves data)
+- `docker compose down -v` (wipes all data)
 
 ## Sprint Progress
 
