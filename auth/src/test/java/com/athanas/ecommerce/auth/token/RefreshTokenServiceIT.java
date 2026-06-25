@@ -6,6 +6,7 @@ import com.athanas.ecommerce.auth.user.User;
 import com.athanas.ecommerce.auth.user.UserRepository;
 import com.athanas.ecommerce.common.error.InvalidRefreshTokenException;
 import com.athanas.ecommerce.common.error.RefreshTokenReuseException;
+import com.athanas.ecommerce.common.util.HashUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,7 +56,7 @@ class RefreshTokenServiceIT {
 
         assertThat(tokenPlain).isNotBlank().hasSize(43);
 
-        String expectedHash = RefreshTokenService.sha256Hex(tokenPlain);
+        String expectedHash = HashUtil.sha256Hex(tokenPlain);
         RefreshToken stored = refreshTokenRepository.findByTokenHash(expectedHash).orElseThrow();
 
         assertThat(stored.getTokenHash()).isEqualTo(expectedHash);
@@ -76,11 +77,11 @@ class RefreshTokenServiceIT {
         assertThat(result.userId()).isEqualTo(userId);
 
         RefreshToken oldStored = refreshTokenRepository
-                .findByTokenHash(RefreshTokenService.sha256Hex(oldPlain)).orElseThrow();
+                .findByTokenHash(HashUtil.sha256Hex(oldPlain)).orElseThrow();
         assertThat(oldStored.getRevokedAt()).isNotNull();
 
         RefreshToken newStored = refreshTokenRepository
-                .findByTokenHash(RefreshTokenService.sha256Hex(result.newRefreshTokenPlain())).orElseThrow();
+                .findByTokenHash(HashUtil.sha256Hex(result.newRefreshTokenPlain())).orElseThrow();
         assertThat(oldStored.getReplacedBy()).isEqualTo(newStored.getId());
     }
 
@@ -96,7 +97,7 @@ class RefreshTokenServiceIT {
                 .isInstanceOf(RefreshTokenReuseException.class);
 
         RefreshToken t2Stored = refreshTokenRepository
-                .findByTokenHash(RefreshTokenService.sha256Hex(t2Plain)).orElseThrow();
+                .findByTokenHash(HashUtil.sha256Hex(t2Plain)).orElseThrow();
         assertThat(t2Stored.getRevokedAt()).isNotNull();
     }
 
@@ -104,7 +105,7 @@ class RefreshTokenServiceIT {
     void shouldRejectExpiredToken() {
         UUID userId = createUser();
         String tokenPlain = "test-expired-token-" + UUID.randomUUID();
-        String tokenHash = RefreshTokenService.sha256Hex(tokenPlain);
+        String tokenHash = HashUtil.sha256Hex(tokenPlain);
 
         RefreshToken expired = new RefreshToken();
         expired.setUserId(userId);

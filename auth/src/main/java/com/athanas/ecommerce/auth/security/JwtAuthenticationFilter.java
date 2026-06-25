@@ -1,5 +1,6 @@
 package com.athanas.ecommerce.auth.security;
 
+import com.athanas.ecommerce.auth.token.AccessTokenBlacklist;
 import com.athanas.ecommerce.auth.token.JwtGenerator;
 import com.athanas.ecommerce.auth.user.User;
 import com.athanas.ecommerce.auth.user.UserRepository;
@@ -35,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtGenerator jwtGenerator;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final AccessTokenBlacklist accessTokenBlacklist;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -52,17 +54,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             jws = jwtGenerator.parseAndValidate(token);
         } catch (JwtException e) {
-            writeUnauthorized(response, "Invalid or expired access token");
+            writeError(response, "Invalid or expired access token",
+                    "https://athanas.dev/errors/invalid-access-token");
             return;
         }
 
         Claims claims = jws.getPayload();
         UUID userId = UUID.fromString(claims.getSubject());
+        String jtiString = claims.getId();
+
+        if (jtiString != null) {
+            UUID jti = UUID.fromString(jtiString);
+            if (accessTokenBlacklist.isBlacklisted(jti)) {
+                writeError(response, "Token has been revoked",
+                        "https://athanas.dev/errors/token-revoked");
+                return;
+            }
+        }
+
         List<String> roles = claims.get("roles", List.class);
 
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isEmpty() || !userOpt.get().isEnabled()) {
-            writeUnauthorized(response, "User account is not active");
+            writeError(response, "User account is not active",
+                    "https://athanas.dev/errors/invalid-access-token");
             return;
         }
 
@@ -80,9 +95,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
-    private void writeUnauthorized(HttpServletResponse response, String detail) throws IOException {
+    private void writeError(HttpServletResponse response, String detail, String type) throws IOException {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, detail);
-        problem.setType(URI.create("https://athanas.dev/errors/invalid-access-token"));
+        problem.setType(URI.create(type));
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);

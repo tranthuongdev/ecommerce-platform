@@ -26,16 +26,16 @@ public class RefreshController {
 
     @PostMapping("/refresh")
     public LoginResponse refresh(@Valid @RequestBody RefreshRequest req) {
-        RefreshTokenRotationResult result = refreshTokenService.rotate(req.refreshToken());
+        RefreshTokenRotationResult rotationResult = refreshTokenService.rotate(req.refreshToken());
 
-        Set<String> roleNames = userRepository.findById(result.userId())
+        Set<String> roleNames = userRepository.findById(rotationResult.userId())
                 .orElseThrow(InvalidRefreshTokenException::new)
                 .getRoles().stream()
                 .map(Role::getName)
                 .collect(Collectors.toSet());
 
-        String accessToken = jwtGenerator.generateAccessToken(result.userId(), roleNames);
-        return new LoginResponse(accessToken, result.newRefreshTokenPlain(),
+        AccessTokenResult accessResult = jwtGenerator.generateAccessToken(rotationResult.userId(), roleNames);
+        return new LoginResponse(accessResult.token(), rotationResult.newRefreshTokenPlain(),
                 jwtProperties.getAccessTtl().toSeconds());
     }
 }

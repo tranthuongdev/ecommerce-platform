@@ -2,6 +2,7 @@ package com.athanas.ecommerce.auth.security;
 
 import com.athanas.ecommerce.auth._testapi.RoleTestController;
 import com.athanas.ecommerce.auth.config.SecurityConfig;
+import com.athanas.ecommerce.auth.token.AccessTokenBlacklist;
 import com.athanas.ecommerce.auth.token.JwtGenerator;
 import com.athanas.ecommerce.auth.token.JwtProperties;
 import com.athanas.ecommerce.auth.user.User;
@@ -45,6 +46,7 @@ class JwtAuthenticationFilterTest {
 
     @MockBean JwtGenerator jwtGenerator;
     @MockBean UserRepository userRepository;
+    @MockBean AccessTokenBlacklist accessTokenBlacklist;
 
     private static final JwtGenerator REAL_GENERATOR;
 
@@ -101,7 +103,7 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void shouldAcceptValidUserToken_accessUserEndpoint() throws Exception {
-        String token = REAL_GENERATOR.generateAccessToken(userId, Set.of("USER"));
+        String token = REAL_GENERATOR.generateAccessToken(userId, Set.of("USER")).token();
         when(jwtGenerator.parseAndValidate(token)).thenAnswer(inv -> REAL_GENERATOR.parseAndValidate(token));
         when(userRepository.findById(userId)).thenReturn(Optional.of(activeUser));
 
@@ -113,7 +115,7 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void shouldRejectUserToken_accessSellerEndpoint() throws Exception {
-        String token = REAL_GENERATOR.generateAccessToken(userId, Set.of("USER"));
+        String token = REAL_GENERATOR.generateAccessToken(userId, Set.of("USER")).token();
         when(jwtGenerator.parseAndValidate(token)).thenAnswer(inv -> REAL_GENERATOR.parseAndValidate(token));
         when(userRepository.findById(userId)).thenReturn(Optional.of(activeUser));
 
@@ -124,7 +126,7 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void shouldRejectUserToken_accessAdminEndpoint() throws Exception {
-        String token = REAL_GENERATOR.generateAccessToken(userId, Set.of("USER"));
+        String token = REAL_GENERATOR.generateAccessToken(userId, Set.of("USER")).token();
         when(jwtGenerator.parseAndValidate(token)).thenAnswer(inv -> REAL_GENERATOR.parseAndValidate(token));
         when(userRepository.findById(userId)).thenReturn(Optional.of(activeUser));
 
@@ -135,7 +137,7 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void shouldAcceptValidAdminToken_accessAllEndpoints() throws Exception {
-        String token = REAL_GENERATOR.generateAccessToken(userId, Set.of("ADMIN"));
+        String token = REAL_GENERATOR.generateAccessToken(userId, Set.of("ADMIN")).token();
         when(jwtGenerator.parseAndValidate(token)).thenAnswer(inv -> REAL_GENERATOR.parseAndValidate(token));
 
         User adminUser = new User();
@@ -163,7 +165,7 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void shouldRejectRevokedUser() throws Exception {
-        String token = REAL_GENERATOR.generateAccessToken(userId, Set.of("USER"));
+        String token = REAL_GENERATOR.generateAccessToken(userId, Set.of("USER")).token();
         when(jwtGenerator.parseAndValidate(token)).thenAnswer(inv -> REAL_GENERATOR.parseAndValidate(token));
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
@@ -175,7 +177,7 @@ class JwtAuthenticationFilterTest {
 
     @Test
     void shouldRejectDisabledUser() throws Exception {
-        String token = REAL_GENERATOR.generateAccessToken(userId, Set.of("USER"));
+        String token = REAL_GENERATOR.generateAccessToken(userId, Set.of("USER")).token();
         when(jwtGenerator.parseAndValidate(token)).thenAnswer(inv -> REAL_GENERATOR.parseAndValidate(token));
 
         User disabledUser = new User();
