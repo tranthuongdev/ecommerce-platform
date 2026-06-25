@@ -23,15 +23,19 @@ public class JwtGenerator {
         this.properties = properties;
     }
 
-    public String generateAccessToken(UUID userId, Set<String> roleNames) {
+    public AccessTokenResult generateAccessToken(UUID userId, Set<String> roleNames) {
+        UUID jti = UUID.randomUUID();
         Instant now = Instant.now();
-        return Jwts.builder()
+        Instant expiresAt = now.plus(properties.getAccessTtl());
+        String token = Jwts.builder()
                 .subject(userId.toString())
+                .id(jti.toString())
                 .claim("roles", roleNames)
                 .issuedAt(Date.from(now))
-                .expiration(Date.from(now.plus(properties.getAccessTtl())))
+                .expiration(Date.from(expiresAt))
                 .signWith(signingKey())
                 .compact();
+        return new AccessTokenResult(token, jti, expiresAt);
     }
 
     public Jws<Claims> parseAndValidate(String token) throws JwtException {

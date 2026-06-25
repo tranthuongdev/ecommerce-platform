@@ -1,5 +1,6 @@
 package com.athanas.ecommerce.auth.login;
 
+import com.athanas.ecommerce.auth.token.AccessTokenResult;
 import com.athanas.ecommerce.auth.token.JwtGenerator;
 import com.athanas.ecommerce.auth.token.JwtProperties;
 import com.athanas.ecommerce.auth.token.RefreshTokenService;
@@ -54,9 +55,9 @@ public class LoginService {
                 .map(Role::getName)
                 .collect(Collectors.toSet());
 
-        String accessToken = jwtGenerator.generateAccessToken(user.getId(), roleNames);
+        AccessTokenResult accessResult = jwtGenerator.generateAccessToken(user.getId(), roleNames);
         String refreshToken = refreshTokenService.issue(user.getId());
 
-        return new LoginResponse(accessToken, refreshToken, jwtProperties.getAccessTtl().toSeconds());
+        return new LoginResponse(accessResult.token(), refreshToken, jwtProperties.getAccessTtl().toSeconds());
     }
 }

@@ -37,17 +37,19 @@ class JwtGeneratorTest {
         UUID userId = UUID.randomUUID();
         Set<String> roles = Set.of("USER", "ADMIN");
 
-        String token = generator.generateAccessToken(userId, roles);
-        Jws<Claims> jws = generator.parseAndValidate(token);
+        AccessTokenResult result = generator.generateAccessToken(userId, roles);
+        Jws<Claims> jws = generator.parseAndValidate(result.token());
 
         assertThat(jws.getPayload().getSubject()).isEqualTo(userId.toString());
         assertThat(jws.getPayload().get("roles", List.class))
                 .containsExactlyInAnyOrder("USER", "ADMIN");
+        assertThat(jws.getPayload().getId()).isEqualTo(result.jti().toString());
+        assertThat(result.expiresAt()).isAfter(java.time.Instant.now());
     }
 
     @Test
     void shouldRejectTamperedToken() {
-        String token = generator.generateAccessToken(UUID.randomUUID(), Set.of("USER"));
+        String token = generator.generateAccessToken(UUID.randomUUID(), Set.of("USER")).token();
         String tampered = token.substring(0, token.length() - 1) + "X";
 
         assertThatThrownBy(() -> generator.parseAndValidate(tampered))
@@ -62,7 +64,7 @@ class JwtGeneratorTest {
         expiredProps.setRefreshTtl(Duration.ofDays(7));
         JwtGenerator expiredGenerator = new JwtGenerator(expiredProps);
 
-        String token = expiredGenerator.generateAccessToken(UUID.randomUUID(), Set.of("USER"));
+        String token = expiredGenerator.generateAccessToken(UUID.randomUUID(), Set.of("USER")).token();
         Thread.sleep(100);
 
         assertThatThrownBy(() -> expiredGenerator.parseAndValidate(token))
@@ -71,7 +73,7 @@ class JwtGeneratorTest {
 
     @Test
     void shouldRejectWrongSignature() {
-        String token = generator.generateAccessToken(UUID.randomUUID(), Set.of("USER"));
+        String token = generator.generateAccessToken(UUID.randomUUID(), Set.of("USER")).token();
 
         JwtProperties otherProps = new JwtProperties();
         otherProps.setSecret("other_secret_at_least_256_bits_long_for_hs256_xxxx_different_key");

@@ -1,5 +1,6 @@
 package com.athanas.ecommerce.auth.login;
 
+import com.athanas.ecommerce.auth.token.AccessTokenResult;
 import com.athanas.ecommerce.auth.token.JwtGenerator;
 import com.athanas.ecommerce.auth.token.JwtProperties;
 import com.athanas.ecommerce.auth.token.RefreshTokenService;
@@ -62,7 +63,8 @@ class LoginServiceTest {
         when(jwtProperties.getAccessTtl()).thenReturn(Duration.ofMinutes(15));
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("secret123", "encoded")).thenReturn(true);
-        when(jwtGenerator.generateAccessToken(any(), any())).thenReturn("jwt.token.here");
+        when(jwtGenerator.generateAccessToken(any(), any())).thenReturn(
+                new AccessTokenResult("jwt.token.here", UUID.randomUUID(), Instant.now().plusSeconds(900)));
         when(refreshTokenService.issue(any())).thenReturn("refresh.token.plain");
 
         LoginResponse resp = service.login(REQ);

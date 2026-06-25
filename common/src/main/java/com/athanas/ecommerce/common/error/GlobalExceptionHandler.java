@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -90,6 +91,18 @@ public class GlobalExceptionHandler {
                         HttpStatus.UNAUTHORIZED,
                         ex.getMessage(),
                         "https://athanas.dev/errors/refresh-token-reuse"
+                ));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ProblemDetail> handleMessageNotReadable(HttpMessageNotReadableException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .body(factory.of(
+                        HttpStatus.BAD_REQUEST,
+                        "Malformed or missing request body",
+                        "https://athanas.dev/errors/bad-request"
                 ));
     }
 
