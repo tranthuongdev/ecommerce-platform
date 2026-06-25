@@ -4,8 +4,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 /**
- * Enables method-level security (@PreAuthorize) for product module.
- * URL-level security and JWT filter chain are managed by auth module's SecurityConfig.
+ * Enables @PreAuthorize / @PostAuthorize for the product module.
+ * No SecurityFilterChain here — the full app uses auth module's chain which
+ * includes JwtAuthenticationFilter. Product module tests supply their own
+ * test-scoped filter chain via ProductTestSecurityConfig.
  */
 @Configuration
 @EnableMethodSecurity

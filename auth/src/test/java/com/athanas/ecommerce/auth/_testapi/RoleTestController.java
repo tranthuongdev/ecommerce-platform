@@ -1,4 +1,4 @@
-// TEMP — remove at end of Sprint 2
+// TEMP — remove at end of Sprint 2 (moved to test scope so excluded from production jar)
 package com.athanas.ecommerce.auth._testapi;
 
 import com.athanas.ecommerce.auth.security.CurrentUserResolver;
