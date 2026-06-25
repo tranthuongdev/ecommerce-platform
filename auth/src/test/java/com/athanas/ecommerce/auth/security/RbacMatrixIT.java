@@ -1,6 +1,7 @@
 package com.athanas.ecommerce.auth.security;
 
 import com.athanas.ecommerce.auth.testsupport.TestUserFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -48,6 +50,12 @@ class RbacMatrixIT {
 
     @Autowired MockMvc mockMvc;
     @Autowired JdbcTemplate jdbcTemplate;
+    @Autowired StringRedisTemplate redisTemplate;
+
+    @BeforeEach
+    void clearIpRateLimit() {
+        redisTemplate.delete("login:rate:ip:127.0.0.1");
+    }
 
     static Stream<Arguments> rbacMatrix() {
         return Stream.of(

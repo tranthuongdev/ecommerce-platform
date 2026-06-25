@@ -3,8 +3,10 @@ package com.athanas.ecommerce.auth.login;
 import com.athanas.ecommerce.auth.token.JwtGenerator;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -50,9 +52,15 @@ class LoginControllerIT {
 
     @Autowired MockMvc mockMvc;
     @Autowired JwtGenerator jwtGenerator;
+    @Autowired StringRedisTemplate redisTemplate;
 
     private static final String REGISTER_URL = "/v1/auth/register";
     private static final String LOGIN_URL    = "/v1/auth/login";
+
+    @BeforeEach
+    void clearIpRateLimit() {
+        redisTemplate.delete("login:rate:ip:127.0.0.1");
+    }
 
     private void register(String email, String password, String name) throws Exception {
         String body = String.format(
