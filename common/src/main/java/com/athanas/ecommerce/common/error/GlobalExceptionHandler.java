@@ -6,10 +6,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+
+import java.util.stream.Collectors;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -92,6 +95,18 @@ public class GlobalExceptionHandler {
                         ex.getMessage(),
                         "https://athanas.dev/errors/refresh-token-reuse"
                 ));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ProblemDetail> handleConstraintViolation(ConstraintViolationException ex) {
+        String detail = ex.getConstraintViolations().stream()
+                .map(cv -> cv.getPropertyPath() + ": " + cv.getMessage())
+                .collect(Collectors.joining("; "));
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .body(factory.of(HttpStatus.BAD_REQUEST, detail,
+                        "https://athanas.dev/errors/validation-failed"));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
