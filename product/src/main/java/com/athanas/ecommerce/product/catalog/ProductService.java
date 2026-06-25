@@ -72,6 +72,15 @@ public class ProductService {
         return productMapper.toDetail(product, category);
     }
 
+    public ProductDetail getForOwnerOrAdmin(UUID id, UUID callerId, Set<String> callerRoles) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+        checkOwnership(product, callerId, callerRoles);
+        Category category = categoryRepository.findById(product.getCategoryId())
+                .orElseThrow(() -> new CategoryNotFoundException(product.getCategoryId()));
+        return productMapper.toDetail(product, category);
+    }
+
     @Transactional
     public ProductDetail create(CreateProductRequest req, UUID callerId, Set<String> callerRoles) {
         if (!categoryRepository.existsById(req.categoryId())) {
