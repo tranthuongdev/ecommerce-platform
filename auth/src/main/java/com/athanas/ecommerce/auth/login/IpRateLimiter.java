@@ -2,6 +2,7 @@ package com.athanas.ecommerce.auth.login;
 
 import com.athanas.ecommerce.common.error.TooManyAttemptsException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
@@ -14,9 +15,16 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class IpRateLimiter {
 
+    // Default values kept as constants so existing tests compile without changes.
     static final int MAX_REQUESTS = 5;
     static final int WINDOW_SECONDS = 60;
     private static final String KEY_PREFIX = "login:rate:ip:";
+
+    @Value("${app.login.rate-limit.max-requests:5}")
+    private int maxRequests;
+
+    @Value("${app.login.rate-limit.window-seconds:60}")
+    private int windowSeconds;
 
     private static final DefaultRedisScript<Long> INCR_SCRIPT;
 
@@ -36,10 +44,10 @@ public class IpRateLimiter {
 
     public void checkAndIncrement(String ip) {
         String key = KEY_PREFIX + ip;
-        Long count = redisTemplate.execute(INCR_SCRIPT, List.of(key), String.valueOf(WINDOW_SECONDS));
-        if (count != null && count > MAX_REQUESTS) {
+        Long count = redisTemplate.execute(INCR_SCRIPT, List.of(key), String.valueOf(windowSeconds));
+        if (count != null && count > maxRequests) {
             Long ttl = redisTemplate.getExpire(key, TimeUnit.SECONDS);
-            long retryAfter = (ttl != null && ttl > 0) ? ttl : WINDOW_SECONDS;
+            long retryAfter = (ttl != null && ttl > 0) ? ttl : windowSeconds;
             throw new TooManyAttemptsException(Duration.ofSeconds(retryAfter));
         }
     }
