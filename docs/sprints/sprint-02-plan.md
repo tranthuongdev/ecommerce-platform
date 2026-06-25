@@ -194,4 +194,31 @@
 
 ## Notes & Risks
 
-[Fill during sprint]
+## Day-by-Day Notes
+
+### T2 Tuần 3 — Sprint Planning
+- ✅ 6 user stories committed (US-007 → US-012)
+- ✅ Issues created on board
+- ✅ Coverage gate plan: 80% auth, skip product until T6 Tuần 4
+
+### T3 Tuần 3 — US-007 (RBAC)
+- ✅ JwtAuthenticationFilter + @PreAuthorize matrix tests
+- Coverage: [paste %]
+
+### T4 Tuần 3 — US-008 (Logout)
+- ✅ JTI blacklist Redis + refresh revoke
+- Coverage: [paste %]
+
+### T5 Tuần 3 — US-009 (Rate Limit)
+- ✅ Per-IP 5/60s via Lua script
+- TODO Sprint 10: Nginx trust config
+- Coverage: [paste %]
+
+### T6 Tuần 3 — US-010 Design
+- ✅ Product schema design doc with 9 decisions + ERD
+
+### T7 Tuần 3 — ADRs + Self Review
+- ✅ ADR-002 (JWT vs Session)
+- ✅ ADR-003 (Refresh Rotation + Reuse Detection)
+- 📊 Tuần 3 done: 3 stories implemented (US-007/008/009), 1 designed (US-010)
+- 📊 On track for Tuần 4: US-010 impl, US-011, US-012
