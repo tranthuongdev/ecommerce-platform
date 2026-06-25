@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -52,5 +54,15 @@ public class ProductExceptionHandler {
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON)
                 .body(factory.of(HttpStatus.FORBIDDEN, ex.getMessage(),
                         "https://athanas.dev/errors/product-access-denied"));
+    }
+
+    // Spring Security 6.4: @PreAuthorize throws AuthorizationDeniedException (not AccessDeniedException)
+    @ExceptionHandler({AuthorizationDeniedException.class, AccessDeniedException.class})
+    public ResponseEntity<ProblemDetail> handleSpringSecurityDenied(RuntimeException ex) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
+                .body(factory.of(HttpStatus.FORBIDDEN, "Access denied",
+                        "https://athanas.dev/errors/forbidden"));
     }
 }
